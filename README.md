@@ -49,7 +49,7 @@ Output: [1]
 
 單向鏈結串列沒辦法紀錄走過的結點，因此必須要設計一個結構來記住
 
-直覺來想有兩種作法
+直覺來想有 3 種作法
 
 作法 1:
 
@@ -85,6 +85,19 @@ Output: [1]
 
   Space Complexity: O(n)
 
+作法3:
+
+  用兩個指標 slow, fast
+
+  還有一個 counter 用來紀錄 fast 走過幾個 node
+
+  fast 先走，slow 等到 fast 走了 n 個點後再開始每次走一步
+
+  當 fast 走到底時， slow 就是要移除的點
+
+時間複雜度是 O(n)
+
+空間複雜度是 O(1)
 ## 程式碼
 
 ```go
@@ -97,24 +110,28 @@ Output: [1]
  */
 func removeNthFromEnd(head *ListNode, n int) *ListNode {
     if head.Next == nil && n == 1 {
-       head = head.Next
-       return head
+		head = head.Next
+		return head
+	}
+	fast := head
+	var slow *ListNode
+	count := 1
+	for fast.Next != nil {
+        if count == n {
+            slow = head
+        }
+        if count > n {
+			slow = slow.Next
+		}
+		fast = fast.Next
+		count++
+	}
+    if slow == nil {
+        head = head.Next
+    } else {
+	    slow.Next = slow.Next.Next
     }
-    cur := head
-    arr := []*ListNode{}
-    for cur != nil {
-        arr = append(arr, cur)
-        cur = cur.Next
-    }
-    aLen := len(arr)
-    target := arr[aLen - n]
-    if aLen - n > 0 {
-        arr[aLen - n - 1].Next = target.Next
-    } 
-    if aLen - n == 0 {
-        head = arr[aLen-n].Next
-    }
-    return head  
+	return head  
 }
 ```
 
