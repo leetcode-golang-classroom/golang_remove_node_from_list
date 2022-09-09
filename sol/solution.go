@@ -12,19 +12,23 @@ func removeNthFromEnd(head *ListNode, n int) *ListNode {
 		head = head.Next
 		return head
 	}
-	cur := head
-	arr := []*ListNode{}
-	for cur != nil {
-		arr = append(arr, cur)
-		cur = cur.Next
+	fast := head
+	var slow *ListNode
+	count := 1
+	for fast.Next != nil {
+		if count == n {
+			slow = head
+		}
+		if count > n {
+			slow = slow.Next
+		}
+		fast = fast.Next
+		count++
 	}
-	aLen := len(arr)
-	target := arr[aLen-n]
-	if aLen-n > 0 {
-		arr[aLen-n-1].Next = target.Next
-	}
-	if aLen-n == 0 {
-		head = arr[aLen-n].Next
+	if slow == nil {
+		head = head.Next
+	} else {
+		slow.Next = slow.Next.Next
 	}
 	return head
 }
